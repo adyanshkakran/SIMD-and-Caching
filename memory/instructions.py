@@ -15,4 +15,4 @@ for line in lines:
         inst = int(words[0].replace(",", ""))
         cpi = float(words[3].replace(",", ""))
 
-print(f'{inst},{cpi},', end='')
+print(f'{inst},{cpi:.2f},', end='')
