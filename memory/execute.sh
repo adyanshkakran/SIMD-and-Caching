@@ -1,7 +1,7 @@
 #!/bin/bash
 
-gcc -O3 -o basic -g 2-basic.c
-gcc -O3 -o strassen -g 2-strassen.c
+gcc -O3 -o basic -g basic.c
+gcc -O3 -o strassen -g strassen.c
 
 echo "n,program,instructions,CPI,l1-cache-hit ratio,last-cache-hit ratio" > out.csv
 
