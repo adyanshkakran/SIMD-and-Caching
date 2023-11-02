@@ -3,37 +3,26 @@
 gcc --std=c11 -O3 -o basic -g basic.c
 gcc --std=c11 -O3 -o strassen -g strassen.c
 
-echo "n,program,instructions,CPI,l1-cache-hit ratio,last-cache-hit ratio" > out.csv
+echo "n,program,instructions,CPI,l1-cache-hit ratio,last-cache-hit ratio,time" > out.csv
 
 arg=16
-for i in {4..14}
+sudo su -c "echo 0 > /proc/sys/kernel/nmi_watchdog"
+for i in {4..6}
 do
     echo -n "$arg,basic," >> out.csv
 
-    perf stat -r 5 -o temp.txt ./basic $arg
-    python3 instructions.py temp.txt >> out.csv
+    perf stat -e instructions,cycles,cache-references,cache-misses,LLC-loads,LLC-load-misses -r 5 -o temp.txt ./basic $arg
+    python3 process.py temp.txt >> out.csv
 
-    perf stat -e cache-references,cache-misses -r 5 -o temp.txt ./basic $arg
-    python3 cache.py temp.txt >> out.csv
-    echo -n "," >> out.csv
-    perf stat -e LLC-loads,LLC-load-misses -o temp.txt ./basic 32
-    python3 cache.py temp.txt >> out.csv
+    echo -e -n "$arg,strassen," >> out.csv
 
-    echo -e -n "\n$arg,strassen," >> out.csv
-
-    perf stat -r 5 -o temp.txt ./strassen $arg
-    python3 instructions.py temp.txt >> out.csv
-
-    perf stat -e cache-references,cache-misses -r 5 -o temp.txt ./strassen $arg
-    python3 cache.py temp.txt >> out.csv
-    echo -n "," >> out.csv
-    perf stat -e LLC-loads,LLC-load-misses -o temp.txt ./strassen 32
-    python3 cache.py temp.txt >> out.csv
-
-    echo "" >> out.csv
+    perf stat -e instructions,cycles,cache-references,cache-misses,LLC-loads,LLC-load-misses -r 5 -o temp.txt ./strassen $arg
+    python3 process.py temp.txt >> out.csv
 
     arg=$((arg*2))
 done
+
+sudo su -c "echo 1 > /proc/sys/kernel/nmi_watchdog"
 
 rm temp.txt basic strassen
 printf "Done writing to out.csv\n"
