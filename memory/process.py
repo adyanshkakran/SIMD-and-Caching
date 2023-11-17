@@ -9,22 +9,35 @@ filename = sys.argv[1]
 file = open(filename, "r")
 lines = file.readlines()
 
+time = 0
 for line in lines:
-    if "cache-references" in line:
-        ref_cache = int(line.split()[0].replace(",", ""))
-    elif "cache-misses" in line:
-        miss_cache = int(line.split()[0].replace(",", ""))
+    if "L1-dcache-loads" in line:
+        l1_refs = int(line.split()[0].replace(',',''))
+    elif "L1-dcache-load-misses" in line:
+        l1_misses = int(line.split()[0].replace(',',''))
+    elif "l2_rqsts.all_demand_references" in line:
+        l2_refs = int(line.split()[0].replace(',',''))
+    elif "l2_rqsts.all_demand_miss" in line:
+        l2_misses = int(line.split()[0].replace(',',''))
+    elif "LLC-stores" in line:
+        llc_refs = int(line.split()[0].replace(',',''))
+    elif "LLC-store-misses" in line:
+        llc_misses = int(line.split()[0].replace(',',''))
     elif "LLC-loads" in line:
-        ref_llc = int(line.split()[0].replace(",", ""))
+        llc_refs += int(line.split()[0].replace(',',''))
     elif "LLC-load-misses" in line:
-        miss_llc = int(line.split()[0].replace(",", ""))
-    elif "elapsed" in line:
-        time = float(line.split()[0].replace(",", ""))
+        llc_misses += int(line.split()[0].replace(',',''))
     elif "instructions" in line:
-        words = line.split()
-        inst = int(words[0].replace(",", ""))
-        cpi = 1/float(words[3].replace(",", ""))
+        instrs = int(line.split()[0].replace(',',''))
+    elif "cycles" in line:
+        cycles = int(line.split()[0].replace(',',''))
+    elif "seconds time elapsed" in line:
+        time += float(line.split()[0].replace(',',''))
 
-ratio_cache = (ref_cache - miss_cache) / ref_cache * 100
-ratio_llc = (ref_llc - miss_llc) / ref_llc * 100
-print(f"{inst},{cpi:.2f},{ratio_cache:.2f}%,{ratio_llc:.2f}%,{time:.4f}")
+time = time / 4 
+l1_miss_rate = 1 - l1_misses / l1_refs
+l2_miss_rate = 1 - l2_misses / l2_refs
+llc_miss_rate = 1 - llc_misses / llc_refs
+cpi = cycles / instrs
+
+print(f'{instrs},{cpi:.2f},{l1_miss_rate:.2f},{l2_miss_rate:.2f},{llc_miss_rate:.2f},{time:.4f}')
