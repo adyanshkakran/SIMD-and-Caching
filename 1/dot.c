@@ -22,10 +22,10 @@ int main(int argc, char** argv){
         a[i] = rand() % 100;
         b[i] = rand() % 100;
     }
-    int time = clock();
+    double time = clock();
     int c = dot(a, b, n);
     time = clock() - time;
-    printf("Time: %d\n", time);
+    printf("%.6f", time / CLOCKS_PER_SEC);
     free(a);
     free(b);
     return 0;
