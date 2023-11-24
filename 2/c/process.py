@@ -18,5 +18,7 @@ for line in lines:
         l1_misses_num = int(line.split()[3].replace(',',''))
     elif "LLd" in line and "misses" in line:
         ll_misses_num = int(line.split()[3].replace(',',''))
+    elif "I" in line and "refs" in line:
+        ins_num = int(line.split()[3].replace(',',''))
 
-print(f"{time},{block_size},{(l1_misses_num+ll_misses_num)/refs_num}")
+print(f"{time},{ins_num},{block_size},{(l1_misses_num+ll_misses_num)/refs_num}")

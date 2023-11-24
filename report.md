@@ -7,8 +7,6 @@ The resepective programs for parts (a),(b) and (c) are in the files `dot.c`, `ve
 I have run these three programs and constructed the final `out.csv` using the following commands:
 
 ```bash
-#!/bin/bash
-
 gcc dot.c -o dot
 gcc -mavx2 vector_dot.c -o vector_dot
 gcc -mavx2 even_vector.c -o even_vector
@@ -95,8 +93,6 @@ The programs for part (a), (b) and (c) are in `basic.c`, `strassen.c` and `tiled
 For profiling cache misses, I have used the perf profiler and the script `execute.sh` to run the program for different values of n. The script is:
 
 ```bash
-#!/bin/bash
-
 gcc --std=c11 -o basic -g basic.c
 gcc --std=c11 -o strassen -g strassen.c
 
@@ -145,7 +141,7 @@ rm temp.txt basic strassen
 printf "Done writing to out.csv\n"
 ```
 
- The final output for these programs are: 
+The final output for these programs are: 
 
 ```
 n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit-ratio,time
@@ -170,8 +166,6 @@ This shows us the performance of the strassen algorithm keeps getting better for
 For part (c), I have used a script that runs the program for different tile sizes and stores the output in `out.csv`. The dimension of the matrix used for the profiling is 512x512 The script is:
 
 ```bash
-#!/bin/bash
-
 SOURCE_FILE="/home/adyanshk/Personal/courses/ACA/A1/2/c/tiled.c"
 
 gcc -g ./tiled.c -o tiled
@@ -201,26 +195,28 @@ rm tiled callgrind.out.* output
  The output of the program is:
 
 ```
-block_size,miss_rate
-4,0.059288706505941695
-8,0.060197040059025216
-16,0.06006929406669554
-32,0.06006929406669554
-64,0.06006929406669554
-128,0.06006842690303302
+time,instructions,block_size,miss_rate
+149,8171097874,4,0.0034850679802710333
+125,7754951826,8,0.0015366366039358096
+106,7582593893,16,0.0006499460055023385
+105,7504225477,32,0.00031003563783085764
+101,7466854133,64,0.00021350014986870768
+122,7448604224,128,0.0027805491598219215
 ```
 
 This clearly shows that 64 is the best tile size for the program. The program is in `tiled.c` and the graph is:
 
 ![graph](2/c/block_size_vs_miss_rate.png)
 
+On comparing with the matrix multiplication program in part (b), we see that the miss rate is much lower for the tiled program. This is because the tiled program is more cache friendly and hence has a lower miss rate. Even the instruction count has been reduced by a factor of 10. This is because the tiled program has to perform less operations than the strassen program. This shows us the importance of cache friendly programming and how much of a drastic change it can have on the performance. 
+
+> **_NOTE:_**  The times given in the output are not accurate as the program was run using valgrind which is a cache simulator, hence not being accurate for running on actual hardware. The times are given just for reference.
+
 # Part 3 
 
 The given program has been implemented in `3.c`. I have used a script to run through different values of l1 and l2 sizes to find the optimal cache configuration using fully associative caches. I used callgrind to profile the program and the script is:
 
 ```bash
-#!/bin/bash
-
 L1_sizes=(16 32 48 64)
 L2_sizes=(512 1024 1536 2048)
 LINE_SIZE=64 
@@ -248,27 +244,28 @@ python3 graph.py
 rm callgrind.out.* 3 output
 ```
 
+The program gives these values as output:
+
 ```
 time,l1_size,l2_size,miss_rate
-51.0,16,512,0.006232737769443012
-65.0,16,1024,0.0062326716474593695
-78.0,16,1536,0.006232621443731048
-98.0,16,2048,0.006232572464483905
-73.0,32,512,0.004934026092866166
-99.0,32,1024,0.0049339611953637015
-114.0,32,1536,0.00493391099163538
-138.0,32,2048,0.004933862012388238
-63.0,48,512,0.004933945277108381
-82.0,48,1024,0.004933880379605916
-101.0,48,1536,0.004933830175877595
-107.0,48,2048,0.004933781196630452
-53.0,64,512,0.004933898746823595
-85.0,64,1024,0.00493383384932113
-92.0,64,1536,0.004933783645592809
-165.0,64,2048,0.0049337346663456665
-
+51,16,512,0.006232737769443012
+65,16,1024,0.0062326716474593695
+78,16,1536,0.006232621443731048
+98,16,2048,0.006232572464483905
+73,32,512,0.004934026092866166
+99,32,1024,0.0049339611953637015
+114,32,1536,0.00493391099163538
+138,32,2048,0.004933862012388238
+63,48,512,0.004933945277108381
+82,48,1024,0.004933880379605916
+101,48,1536,0.004933830175877595
+107,48,2048,0.004933781196630452
+53,64,512,0.004933898746823595
+85,64,1024,0.00493383384932113
+92,64,1536,0.004933783645592809
+165,64,2048,0.0049337346663456665
 ```
 
-The best cache configuration is XXXXX. The 3D graph between l1 size, l2 size and miss rate is:
+The best cache configuration is 64 bytes for L1 and 512 bytes for L2. This is because it takes the minimum time to execute alnog with a very less miss rate. We see that the miss rates are majorly equal for all configurations beyond 16. This is because majority of the misses occur because of the L1_cache.  The 3D graph between l1 size, l2 size and miss rate is:
 
 ![graph](3/l1_size_vs_l2_size_vs_miss_rate.png)

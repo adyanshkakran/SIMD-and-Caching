@@ -12,7 +12,7 @@ LINE_SIZE=64  # 64 bytes
 L1_LINES=$((L1_SIZE / LINE_SIZE))
 L2_LINES=$((L2_SIZE / LINE_SIZE))
 
-echo "time,block_size,miss_rate" > out.csv
+echo "time,instructions,block_size,miss_rate" > out.csv
 
 for BLOCK_SIZE in "${BLOCK_SIZES[@]}"
 do
