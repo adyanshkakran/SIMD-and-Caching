@@ -1,4 +1,4 @@
-n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit-ratio,time
+n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit ratio,time
 16,basic,1354148,0.96,0.96,0.50,0.67,0.0011
 16,strassen,1354308,0.93,0.96,0.51,0.67,0.0008
 32,basic,2968127,0.62,0.99,0.48,0.70,0.0009

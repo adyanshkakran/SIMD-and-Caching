@@ -6,7 +6,7 @@ gcc --std=c11 -o strassen -g strassen.c
 BASIC="./basic"
 STRASSEN="./strassen"
 
-echo "n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit-ratio,time" > out.csv
+echo "n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit ratio,time" > out.csv
 
 L1_EVENTS="L1-dcache-loads,L1-dcache-load-misses"
 L2_EVENTS="l2_rqsts.all_demand_references,l2_rqsts.all_demand_miss,LLC-stores,LLC-store-misses"
@@ -42,6 +42,8 @@ do
     
     arg=$((arg*2))
 done
+
+python3 graph.py
 
 
 rm temp.txt basic strassen

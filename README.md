@@ -36,28 +36,9 @@ rm vector_dot
 rm even_vector
 ```
 
-This runs on all three programs on vector sizes ranging from 16000 to 1048576000 and stores the output in `dot.csv`. The output of the programs is:
+This runs on all three programs on vector sizes ranging from $10^2$ to $10^9$ and stores the output in `out.csv`. The output is plotted in the following graphs - 
 
-```
-n,dot,vector_dot,even_vector
-16000,0.000046,0.000018,0.000018
-32000,0.000446,0.000119,0.000072
-64000,0.000186,0.000123,0.000086
-128000,0.000516,0.000154,0.000396
-256000,0.002350,0.001874,0.000615
-512000,0.003912,0.003264,0.002823
-1024000,0.002927,0.001171,0.003044
-2048000,0.008973,0.004044,0.007715
-4096000,0.022068,0.005117,0.006667
-8192000,0.031208,0.014218,0.008874
-16384000,0.057467,0.031735,0.031718
-32768000,0.119597,0.060656,0.056803
-65536000,0.251129,0.114250,0.079627
-131072000,0.332972,0.232663,0.230808
-262144000,0.851545,0.274663,0.508448
-524288000,5.356523,1.387943,0.629383
-1048576000,15.348380,3.660430,3.974219
-```
+![graph](1/n_vs_time.png)
 
 These results clearly indicate how the vector operations improve the perfomance of the program. The program in part (c) is not much faster than the program in part (b) as in the vector operation, it has to load 4 consecutive elements and cannot store only even indices. This makes it store all values in the vector register and then perform the operation.
 
@@ -79,11 +60,15 @@ The program in part (e) calculates peak GFLOPS of the system. It uses basic floa
 The program outputs the following for my system:
 
 ```
-1.102124 GFLOPS
+1.182632 GFLOPS
 ```
 
 ## (f)
-The programs in part (a),(b) and (c) are all memory bound for large n as they have to wait for fetching the array and have to read large portions of the array.
+The programs in part (a),(b) and (c) are all memory bound for large n as they have to wait for fetching the array and have to read large portions of the array. This is clearly indicated by the results of these programs as the CPU consumption remains approximately same but the cache hits keep going up with increasing n. This shows that the CPU is waiting for memory to be fetched for all operations.
+
+![graph](1/n_vs_cpu.png)
+
+![graph](1/n_vs_cache.png)
 
 
 # Part 2
@@ -141,25 +126,11 @@ rm temp.txt basic strassen
 printf "Done writing to out.csv\n"
 ```
 
-The final output for these programs are: 
+The final output for these programs is stored in `out.csv`. The graphs which show the final results are given below:
 
-```
-n,program,instructions,CPI,l1-cache-hit ratio,l2-cache-hit ratio,l3-cache-hit-ratio,time
-16,basic,1354148,0.96,0.96,0.50,0.67,0.0011
-16,strassen,1354308,0.93,0.96,0.51,0.67,0.0008
-32,basic,2968127,0.62,0.99,0.48,0.70,0.0009
-32,strassen,2955421,0.66,0.99,0.52,0.66,0.0010
-64,basic,15086215,0.35,1.00,0.53,0.51,0.0031
-64,strassen,15080756,0.34,0.99,0.52,0.62,0.0027
-128,basic,109435723,0.29,1.00,0.71,0.61,0.0103
-128,strassen,109431238,0.33,1.00,0.69,0.87,0.0133
-256,basic,853765941,0.32,0.98,0.79,0.93,0.0927
-256,strassen,853765008,0.32,0.99,0.78,0.94,0.0878
-512,basic,6767927655,0.51,0.95,0.95,0.93,0.9171
-512,strassen,6766825691,0.38,0.95,0.95,0.80,0.9605
-1024,basic,53932675287,0.88,0.95,0.92,0.66,13.3419
-1024,strassen,53917195100,0.55,0.95,0.91,0.61,11.2847
-```
+![graph](2/ab/n_vs_l1.png)
+![graph](2/ab/n_vs_l2.png)
+![graph](2/ab/n_vs_l3.png)
 
 This shows us the performance of the strassen algorithm keeps getting better for bigger n. This is because of the time complexity of the algorithm and the strassen cache algorith is also more cache friendly. The basic algorithm is not cache friendly and hence the performance is not as good as the strassen algorithm. 
 
